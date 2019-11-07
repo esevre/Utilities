@@ -8,6 +8,8 @@
 /// so some of the data is just read as a block for the "extension"
 /// type of WAV file.
 ///
+
+
 #pragma once
 
 #include <array>
@@ -15,8 +17,8 @@
 #include <iostream>
 
 
-/// Extension class to handle reading non-PCM WAV files
-/// PCM files will call empty functions
+/// Extension class to handle reading non-PCM WAV files.
+/// PCM files will call empty functions in Extension.
 struct Extension
 {
     /// Use enum class to manage different types of extensions
@@ -58,6 +60,7 @@ struct Extension
 private:
     /// Methods for internal use only
     /// print & read helpers for different Extended types
+    /// PCM files don't have any extra data so no function is called
     void print_non_pcm() {
         std::cout << "Extension Size : " << ExtensionSize << '\n';
         std::cout << "ChunkID : " << str(ChunkID) << '\n';
