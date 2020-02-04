@@ -127,7 +127,7 @@ public:
 
 private:
     /// Custom internal helper functions
-    [[nodiscard]] std::string str(const QuadChar &quadChar) const {
+    [[nodiscard]] std::string quad_char_string(const QuadChar &quadChar) const {
         std::string s = "\"";
         for (const auto &c : quadChar) {
             s += c;
@@ -140,27 +140,27 @@ public:
     /// Reads wav header from std::fstream
     /// Manually step through and read each variable
     void read(std::fstream &infile) {
-        infile.read((char*)&ChunkID, QuadSize);
-        infile.read((char*)&ChunkSize, QuadSize);
-        infile.read((char*)&Format, QuadSize);
-        infile.read((char*)&SubChunk1_ID, QuadSize);
-        infile.read((char*)&SubChunk1_size, QuadSize);
-        infile.read((char*)&AudioFormat, HalfSize);
-        infile.read((char*)&NumChannels, HalfSize);
-        infile.read((char*)&SampleRate, QuadSize);
-        infile.read((char*)&ByteRate, QuadSize);
-        infile.read((char*)&BlockAlign, HalfSize);
-        infile.read((char*)&BitsPerSample, HalfSize);
+        infile.read((char*)&chunkId, QuadSize);
+        infile.read((char*)&chunkSize, QuadSize);
+        infile.read((char*)&format, QuadSize);
+        infile.read((char*)&subChunk1Id, QuadSize);
+        infile.read((char*)&subChunk1Size, QuadSize);
+        infile.read((char*)&audioFormat, HalfSize);
+        infile.read((char*)&numChannels, HalfSize);
+        infile.read((char*)&sampleRate, QuadSize);
+        infile.read((char*)&byteRate, QuadSize);
+        infile.read((char*)&blockAlign, HalfSize);
+        infile.read((char*)&bitsPerSample, HalfSize);
 
         /// Check to see if extra information is in the header
         /// If it is there, then read it
         /// ExtendedData calls the correct read method based on header type
         /// Regular (PCM) headers will call an empty function.
         set_format_type();
-        ExtendedData.read(infile);
+        extendedData.read(infile);
 
-        infile.read((char*)&SubChunk2_ID, QuadSize);
-        infile.read((char*)&SubChunk2_size, QuadSize);
+        infile.read((char*)&subChunk2Id, QuadSize);
+        infile.read((char*)&subChunk2Size, QuadSize);
     }
 
     /// Extended data should be one of 3 types
@@ -169,51 +169,51 @@ public:
     /// Non-PCM : For nonPCM formatted chunks
     /// Extensible : Indicates that there is an extension to the format chunk
     void set_format_type() {
-        if (SubChunk1_size == 16) {
-            ExtendedData = Extension(Extension::RiffType::PCM);
-        } else if (SubChunk1_size == 18) {
-            ExtendedData = Extension(Extension::RiffType::NonPCM);
-        } else if (SubChunk1_size == 40) {
-            ExtendedData = Extension(Extension::RiffType::Extensible);
+        if (subChunk1Size == 16) {
+            extendedData = Extension(Extension::RiffType::PCM);
+        } else if (subChunk1Size == 18) {
+            extendedData = Extension(Extension::RiffType::NonPCM);
+        } else if (subChunk1Size == 40) {
+            extendedData = Extension(Extension::RiffType::Extensible);
         } else {
-            ExtendedData = Extension(Extension::RiffType::Undefined);
+            extendedData = Extension(Extension::RiffType::Undefined);
         }
     }
 
     /// Function to print and test that data is reading correctly
     void print() const {
-        std::cout << "chunkID : " << str(ChunkID) << '\n';
-        std::cout << "ChunkSize : " << ChunkSize << '\n';
-        std::cout << "Format : " << str(Format) << '\n';
-        std::cout << "SubChunk1_ID : " << str(SubChunk1_ID) << '\n';
-        std::cout << "SubChunk1_size : " << SubChunk1_size << '\n';
-        std::cout << "AudioFormat : " << AudioFormat << '\n';
-        std::cout << "NumChannels : " << NumChannels << '\n';
-        std::cout << "SampleRate : " << SampleRate << '\n';
-        std::cout << "ByteRate : " << ByteRate << '\n';
-        std::cout << "BlockAlign : " << BlockAlign << '\n';
-        std::cout << "BitsPerSample : " << BitsPerSample << '\n';
-        ExtendedData.print();
-        std::cout << "SubChunk2_ID : " << str(SubChunk2_ID) << '\n';
-        std::cout << "SubChunk2_size : " << SubChunk2_size << '\n';
+        std::cout << "ChunkID : " << quad_char_string(chunkId) << '\n';
+        std::cout << "ChunkSize : " << chunkSize << '\n';
+        std::cout << "Format : " << quad_char_string(format) << '\n';
+        std::cout << "SubChunk1_ID : " << quad_char_string(subChunk1Id) << '\n';
+        std::cout << "SubChunk1_size : " << subChunk1Size << '\n';
+        std::cout << "AudioFormat : " << audioFormat << '\n';
+        std::cout << "NumChannels : " << numChannels << '\n';
+        std::cout << "SampleRate : " << sampleRate << '\n';
+        std::cout << "ByteRate : " << byteRate << '\n';
+        std::cout << "BlockAlign : " << blockAlign << '\n';
+        std::cout << "BitsPerSample : " << bitsPerSample << '\n';
+        extendedData.print();
+        std::cout << "SubChunk2_ID : " << quad_char_string(subChunk2Id) << '\n';
+        std::cout << "SubChunk2_size : " << subChunk2Size << '\n';
     }
 
 public:
     /// Header data information
-    QuadChar ChunkID={0,0,0,0};
-    QuadSInt ChunkSize=0;
-    QuadChar Format={0,0,0,0};
-    QuadChar SubChunk1_ID={0,0,0,0};
-    QuadSInt SubChunk1_size=0;
-    HalfSInt AudioFormat=0;
-    HalfSInt NumChannels=0;
-    QuadSInt SampleRate=0;
-    QuadSInt ByteRate=0;
-    HalfSInt BlockAlign=0;
-    HalfSInt BitsPerSample=0;
-    Extension ExtendedData;
-    QuadChar SubChunk2_ID={0,0,0,0};
-    QuadSInt SubChunk2_size=0;
+    QuadChar chunkId={0, 0, 0, 0};
+    QuadSInt chunkSize=0;
+    QuadChar format={0, 0, 0, 0};
+    QuadChar subChunk1Id={0, 0, 0, 0};
+    QuadSInt subChunk1Size=0;
+    HalfSInt audioFormat=0;
+    HalfSInt numChannels=0;
+    QuadSInt sampleRate=0;
+    QuadSInt byteRate=0;
+    HalfSInt blockAlign=0;
+    HalfSInt bitsPerSample=0;
+    Extension extendedData;
+    QuadChar subChunk2Id={0, 0, 0, 0};
+    QuadSInt subChunk2Size=0;
 };
 
 
