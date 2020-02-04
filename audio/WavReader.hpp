@@ -37,22 +37,22 @@ struct Extension
     Extension()=default;
     /// Construct and set type
     explicit Extension(RiffType type) {
-        Type = type;
+        riffType = type;
     }
 
     /// Only Extensible and NonPCM types will have extra data to read
     void read(std::fstream &infile) {
-        if (Type == RiffType::Extensible) {
+        if (riffType == RiffType::Extensible) {
             read_extension(infile);
-        } else if (Type == RiffType::NonPCM){
+        } else if (riffType == RiffType::NonPCM){
             read_non_pcm(infile);
         }
     }
     /// Only Extensible and NonPCM types will have extra data to print
     void print() {
-        if (Type == RiffType::Extensible) {
+        if (riffType == RiffType::Extensible) {
             print_extension();
-        } else if (Type == RiffType::NonPCM){
+        } else if (riffType == RiffType::NonPCM){
             print_non_pcm();
         }
     }
@@ -62,37 +62,38 @@ private:
     /// print & read helpers for different Extended types
     /// PCM files don't have any extra data so no function is called
     void print_non_pcm() {
-        std::cout << "Extension Size : " << ExtensionSize << '\n';
-        std::cout << "ChunkID : " << str(ChunkID) << '\n';
-        std::cout << "ChunkSize : " << ChunkSize << '\n';
-        std::cout << "SampleLength : " << SampleLength << '\n';
+        std::cout << "Extension Size : " << extensionSize << '\n';
+        std::cout << "chunkID : " << str(chunkID) << '\n';
+        std::cout << "ChunkSize : " << chunkSize << '\n';
+        std::cout << "SampleLength : " << sampleLength << '\n';
 
     }
     void print_extension() {
-        std::cout << "Extension Size : " << ExtensionSize << '\n';
-        std::cout << "ValidBitsPerSample : " << ValidBitsPerSample << '\n';
-        std::cout << "ChannelMask : " << ChannelMask << '\n';
-        std::cout << "Subformat (size) : " << sizeof(SubFormat) << '\n';
-        std::cout << "ChunkID : " << str(ChunkID) << '\n';
-        std::cout << "ChunkSize : " << ChunkSize << '\n';
-        std::cout << "SampleLength : " << SampleLength << '\n';
+        std::cout << "Extension Size : " << extensionSize << '\n';
+        std::cout << "validBitsPerSample : " << validBitsPerSample << '\n';
+        std::cout << "channelMask : " << channelMask << '\n';
+        std::cout << "Subformat (size) : " << sizeof(subFormat) << '\n';
+        std::cout << "chunkID : " << str(chunkID) << '\n';
+        std::cout << "ChunkSize : " << chunkSize << '\n';
+        std::cout << "SampleLength : " << sampleLength << '\n';
     }
     void read_non_pcm(std::fstream &infile){
-        infile.read((char*)&ExtensionSize, HalfSize);
-        infile.read((char*)&ChunkID, QuadSize);
-        infile.read((char*)&ChunkSize, QuadSize);
-        infile.read((char*)&SampleLength, QuadSize);
+        infile.read((char*)&extensionSize, HalfSize);
+        infile.read((char*)&chunkID, QuadSize);
+        infile.read((char*)&chunkSize, QuadSize);
+        infile.read((char*)&sampleLength, QuadSize);
     }
     void read_extension(std::fstream &infile) {
-        infile.read((char*)&ExtensionSize, HalfSize);
-        infile.read((char*)&ValidBitsPerSample, HalfSize);
-        infile.read((char*)&ChannelMask, QuadSize);
-        infile.read((char*)&SubFormat, FormatSize);
-        infile.read((char*)&ChunkID, QuadSize);
-        infile.read((char*)&ChunkSize, QuadSize);
-        infile.read((char*)&SampleLength, QuadSize);
+        infile.read((char*)&extensionSize, HalfSize);
+        infile.read((char*)&validBitsPerSample, HalfSize);
+        infile.read((char*)&channelMask, QuadSize);
+        infile.read((char*)&subFormat, FormatSize);
+        infile.read((char*)&chunkID, QuadSize);
+        infile.read((char*)&chunkSize, QuadSize);
+        infile.read((char*)&sampleLength, QuadSize);
     }
-    std::string str(const QuadChar &quadChar) {
+
+    std::string str(const QuadChar &quadChar) const {
         std::string s = "\"";
         for (const auto &c : quadChar) {
             s += c;
@@ -104,15 +105,15 @@ private:
 public:
     /// All data is default initialized to zero
     /// arrays are known size, so filled manually by default
-    RiffType Type = RiffType::Undefined;
-    HalfSInt ExtensionSize=0;
-    HalfSInt ValidBitsPerSample=0;
-    QuadSInt ChannelMask=0;
+    RiffType riffType = RiffType::Undefined;
+    HalfSInt extensionSize=0;
+    HalfSInt validBitsPerSample=0;
+    QuadSInt channelMask=0;
     // todo: figure out how the subformat chunk works to extract more useful information
-    SubChunk SubFormat={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    QuadChar ChunkID={0,0,0,0};
-    QuadSInt ChunkSize=0;
-    QuadSInt SampleLength=0;
+    SubChunk subFormat={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    QuadChar chunkID={0, 0, 0, 0};
+    QuadSInt chunkSize=0;
+    QuadSInt sampleLength=0;
 };
 
 class WavHeader {
@@ -181,7 +182,7 @@ public:
 
     /// Function to print and test that data is reading correctly
     void print() {
-        std::cout << "ChunkID : " << str(ChunkID) << '\n';
+        std::cout << "chunkID : " << str(ChunkID) << '\n';
         std::cout << "ChunkSize : " << ChunkSize << '\n';
         std::cout << "Format : " << str(Format) << '\n';
         std::cout << "SubChunk1_ID : " << str(SubChunk1_ID) << '\n';
