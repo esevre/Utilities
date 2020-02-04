@@ -127,7 +127,7 @@ public:
 
 private:
     /// Custom internal helper functions
-    std::string str(const QuadChar &quadChar) {
+    std::string str(const QuadChar &quadChar) const {
         std::string s = "\"";
         for (const auto &c : quadChar) {
             s += c;
