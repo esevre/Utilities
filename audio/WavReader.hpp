@@ -63,7 +63,7 @@ private:
     /// PCM files don't have any extra data so no function is called
     void print_non_pcm() const {
         std::cout << "Extension Size : " << extensionSize << '\n';
-        std::cout << "chunkID : " << str(chunkID) << '\n';
+        std::cout << "chunkID : " << quad_char_string(chunkID) << '\n';
         std::cout << "ChunkSize : " << chunkSize << '\n';
         std::cout << "SampleLength : " << sampleLength << '\n';
 
@@ -73,7 +73,7 @@ private:
         std::cout << "validBitsPerSample : " << validBitsPerSample << '\n';
         std::cout << "channelMask : " << channelMask << '\n';
         std::cout << "Subformat (size) : " << sizeof(subFormat) << '\n';
-        std::cout << "chunkID : " << str(chunkID) << '\n';
+        std::cout << "chunkID : " << quad_char_string(chunkID) << '\n';
         std::cout << "ChunkSize : " << chunkSize << '\n';
         std::cout << "SampleLength : " << sampleLength << '\n';
     }
@@ -93,7 +93,7 @@ private:
         infile.read((char*)&sampleLength, QuadSize);
     }
 
-    [[nodiscard]] std::string str(const QuadChar &quadChar) const {
+    [[nodiscard]] std::string quad_char_string(const QuadChar &quadChar) const {
         std::string s = "\"";
         for (const auto &c : quadChar) {
             s += c;
