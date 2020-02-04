@@ -49,7 +49,7 @@ struct Extension
         }
     }
     /// Only Extensible and NonPCM types will have extra data to print
-    void print() {
+    void print() const {
         if (riffType == RiffType::Extensible) {
             print_extension();
         } else if (riffType == RiffType::NonPCM){
@@ -61,14 +61,14 @@ private:
     /// Methods for internal use only
     /// print & read helpers for different Extended types
     /// PCM files don't have any extra data so no function is called
-    void print_non_pcm() {
+    void print_non_pcm() const {
         std::cout << "Extension Size : " << extensionSize << '\n';
         std::cout << "chunkID : " << str(chunkID) << '\n';
         std::cout << "ChunkSize : " << chunkSize << '\n';
         std::cout << "SampleLength : " << sampleLength << '\n';
 
     }
-    void print_extension() {
+    void print_extension() const {
         std::cout << "Extension Size : " << extensionSize << '\n';
         std::cout << "validBitsPerSample : " << validBitsPerSample << '\n';
         std::cout << "channelMask : " << channelMask << '\n';
@@ -93,7 +93,7 @@ private:
         infile.read((char*)&sampleLength, QuadSize);
     }
 
-    std::string str(const QuadChar &quadChar) const {
+    [[nodiscard]] std::string str(const QuadChar &quadChar) const {
         std::string s = "\"";
         for (const auto &c : quadChar) {
             s += c;
@@ -127,7 +127,7 @@ public:
 
 private:
     /// Custom internal helper functions
-    std::string str(const QuadChar &quadChar) const {
+    [[nodiscard]] std::string str(const QuadChar &quadChar) const {
         std::string s = "\"";
         for (const auto &c : quadChar) {
             s += c;
@@ -181,7 +181,7 @@ public:
     }
 
     /// Function to print and test that data is reading correctly
-    void print() {
+    void print() const {
         std::cout << "chunkID : " << str(ChunkID) << '\n';
         std::cout << "ChunkSize : " << ChunkSize << '\n';
         std::cout << "Format : " << str(Format) << '\n';
