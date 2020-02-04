@@ -33,8 +33,8 @@ struct Extension
     static constexpr size_t QuadSize = 4;
     static constexpr size_t HalfSize = 2;
 
-    /// Default constructor
-    Extension()=default;
+    /// Default constructor should never be called
+    Extension()=delete;
     /// Construct and set type
     explicit Extension(RiffType type) {
         riffType = type;
@@ -156,7 +156,7 @@ public:
         /// If it is there, then read it
         /// ExtendedData calls the correct read method based on header type
         /// Regular (PCM) headers will call an empty function.
-        setup_FormatType();
+        set_format_type();
         ExtendedData.read(infile);
 
         infile.read((char*)&SubChunk2_ID, QuadSize);
@@ -168,7 +168,7 @@ public:
     /// PCM : Is a "simple" WAV file using old standards
     /// Non-PCM : For nonPCM formatted chunks
     /// Extensible : Indicates that there is an extension to the format chunk
-    void setup_FormatType() {
+    void set_format_type() {
         if (SubChunk1_size == 16) {
             ExtendedData = Extension(Extension::RiffType::PCM);
         } else if (SubChunk1_size == 18) {
